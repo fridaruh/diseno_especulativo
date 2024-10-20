@@ -9,14 +9,14 @@ import time
 import streamlit as st
 
 st.set_page_config(
-    page_title="Ex-stream-ly Cool App",
+    page_title="Simulador de impacto cultural",
     page_icon="👩‍👩‍👦",
     
 )
 
 #Instanciamos el cliente de Hugging Face
 
-client = InferenceClient(api_key="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")
+client = InferenceClient(api_key="")
 
 
 #Llamada a la API de Hugging Face
@@ -70,7 +70,7 @@ def cargar_dataset():
     """
     Carga el dataset desde la URL y lo almacena en caché.
     """
-    return pd.read_csv("https://raw.githubusercontent.com/fridaruh/diseno_especulativo/refs/heads/master/fine_personas_100k.csv?token=GHSAT0AAAAAACYRTNSVHVXY7AJVJM5M7KAEZYUQ23A")
+    return pd.read_csv("https://raw.githubusercontent.com/fridaruh/diseno_especulativo/refs/heads/master/fine_personas_100k.csv")
 
 def obtener_muestra(df, n=15):
     """
@@ -85,7 +85,12 @@ sample = obtener_muestra(df)
 
 
 def main():
-    st.title("Diseño Especulativo")
+    st.title("Simulador de impacto cultural")
+    st.markdown("""
+    *"El comportamiento humano es en esencia cultural, establece las pautas de lo que es apropiado, aceptado o inapropiado.
+                Así como nuestras formas de interactuar y tomar decisiones." 
+                                    - Dagoberto Páramo*
+    """)
 
     st.write("Selecciona lo que te gustaría observar:")
     
@@ -93,18 +98,59 @@ def main():
     situacion_a_observar = st.selectbox("", options)
 
     st.write("¿Cuál es el proyecto o iniciativa que te gustaría testear?")
-    project = st.text_area("")
+
+    project = st.text_area("¿Cuál es el proyecto o iniciativa que te gustaría testear?",
+                           "Ejemplo: 'Proyecto de desarrollo de transporte eléctrico elevado (CableBus) en la zona urbana de la Ciudad, en conexión con el norte de la Ciudad, colonia San Sebastian Sedas con el Centro histórico de la Ciudad de Oaxaca'")
+
+    st.write("¿En qué Estado te gustaría probarlo?")
+
+     #Define the options and their descriptions
+    cultural_options = {
+        "CDMX": "Bajo sentido de pertenencia y participación en las instituciones políticas y económicas, se sienten desconectadas del sistema de gobierno, afectando la cohesión y participación ciudadana.",
+        "Veracruz": "Se caracteriza por su hospitalidad, orgullo en sus tradiciones, resiliencia ante las dificultades y un enfoque fuerte en la familia y la comunidad, celebrando su diversidad cultural.",
+        "Oaxaca": "La comunidad es central en la vida social. El trabajo comunitario refleja un fuerte sentido de solidaridad y colaboración. Son conocidos por su amabilidad y hospitalidad, creando un ambiente acogedor. La relación con la tierra y las tradiciones agrícolas es fundamental. Los festivales celebran las cosechas y el ciclo agrícola, reforzando los vínculos con la naturaleza y la cultura.",
+        "Monterrey": "Se distinguen por valores como la perseverancia, la familia, el trabajo y la solidaridad. Existe una fuerte ética del trabajo y un enfoque en el éxito personal y profesional. Suelen valorar el esfuerzo y la dedicación como medios para alcanzar objetivos. La proximidad a Estados Unidos ha influido en las creencias y costumbres, introduciendo elementos de cultura norteamericana que se mezclan con las tradiciones locales.",
+        "Yucatán": "Sienten profundamente orgullosos de su identidad, con un fuerte apego a su tierra, su historia y sus héroes locales. Valoran la hospitalidad, la solidaridad comunitaria y el respeto a las tradiciones. Prefieren la sencillez y la belleza natural de su entorno, como los crepúsculos y la brisa del mar, que forman parte de su identidad colectiva."
+    }
+
+    # Create the select box
+    selected_state = st.selectbox(
+    "Selecciona una región para el ajuste cultural:",
+    options=list(cultural_options.keys())
+)
+
+    # Assign the description to cultural_tuning based on the selected state
+    cultural_tuning = cultural_options[selected_state]
 
     if st.button("Enviar"):
 
-        prompt_template = """
-Simulate how the following consumer segment would react to the launch of a new wearable technology product
-(e.g., a smartwatch) that monitors health, focusing on disease prevention and wellness:
-{persona}
-"""
 
+        prompt_inicial = """
+        Simulate how the following specific person {persona}"""
+        
+        prompt_complementario = """ 
+        
+        who lives in a cultural context where: {cultural_tuning}. How this person would react to the launch of {project}?
+
+        Focus specifically on the {situacion_a_observar} of this specific person regarding the project.
+        Provide a detailed analysis of their likely {situacion_a_observar}, considering the unique characteristics and background of this consumer profile.
+
+        Guidelines for the analysis based on the selected focus:
+        - Reacción: Describe the immediate emotional and cognitive response of the consumer.
+        - Interés: Evaluate the level and nature of interest the consumer might have in the project.
+        - Preocupaciones: Identify and explain potential concerns or reservations the consumer might have.
+        - Nivel de aceptación: Assess how likely the consumer is to accept and adopt the project.
+        - Jiribilla: Explore any unique or unexpected ways this consumer might interact with or perceive the project.
+
+        Ensure your response is tailored to the specific consumer profile and the nature of the project described."""
+        prompt_complementario = prompt_complementario.format(
+        cultural_tuning=cultural_tuning,
+        project=project,
+        situacion_a_observar=situacion_a_observar
+         )
+        
         # Asumiendo que ya tienes tu DataFrame 'df' con la columna 'persona'
-        df_resultados = procesar_descripciones(sample, prompt_template)
+        df_resultados = procesar_descripciones(sample, prompt_inicial + prompt_complementario)
 
         # Inicialización del DataFrame en session_state
         if 'df_resultados' not in st.session_state:
