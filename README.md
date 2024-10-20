@@ -31,7 +31,7 @@ La aplicación permite a los usuarios:
 
    ```bash
    git clone https://github.com/fridaruh/diseno_especulativo.git
-cd diseno_especulativo
+cd diseno_especulativo ```
 
 2. **Crea un entorno virtual (opcional pero recomendado):**
 
@@ -49,9 +49,11 @@ cd diseno_especulativo
 
    En tu terminal o en un script Python, ejecuta:
 
+ ```bash
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
+```
 
 5. **Configuración**
 
@@ -59,13 +61,17 @@ nltk.download('stopwords')
 
 - Crea un archivo llamado secrets.toml en el directorio .streamlit de tu proyecto (crea el directorio si no existe):
 
+```bash
 .streamlit/
   secrets.toml
+```
 
 - Agrega tu clave API al archivo secrets.toml:
 
+```bash
 [general]
 huggingface_api_key = "TU_CLAVE_API"
+```
 
 ##Uso
 Ejecuta la aplicación de Streamlit:
