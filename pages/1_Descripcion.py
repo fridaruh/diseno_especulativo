@@ -50,7 +50,7 @@ def procesar_descripciones(df, prompt_template):
         st.warning("El DataFrame está vacío. No hay personas para procesar.")
         return pd.DataFrame()
 
-    progress_text = "Procesando personas. Por favor, espere."
+    progress_text = "Procesando personas. Por favor, espere. Este proceso puede tardar hasta 3 minutos dependiendo de tu conexión a internet"
     my_bar = st.progress(0, text=progress_text)
 
     for index, row in enumerate(df.iterrows()):
