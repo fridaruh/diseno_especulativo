@@ -6,6 +6,8 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from huggingface_hub import InferenceClient
+import plotly.express as px
+import plotly.graph_objects as go
 
 # Download NLTK data
 nltk.download('punkt')
@@ -14,7 +16,7 @@ nltk.download('stopwords')
 # Hugging Face client setup
 @st.cache_resource
 def get_hf_client():
-    return InferenceClient(api_key="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")
+    return InferenceClient(api_key="")
 
 client = get_hf_client()
 
@@ -47,6 +49,11 @@ def obtener_sentimiento(prompt):
             output += message.choices[0].delta.content
     return output.strip()
 
+def get_sentiment_percentage(df, sentiment):
+    if sentiment in df['sentiment'].values:
+        return df.loc[df['sentiment'] == sentiment, 'percentage'].values[0]
+    return 0.0
+
 # Function to process text
 def procesar_texto(df):
     data = df['output'].to_list()
@@ -61,7 +68,7 @@ df_resultados = st.session_state['df_resultados']
 
 # Display the DataFrame
 st.write("Data Preview:")
-st.write(df_resultados.head())
+
 
 output = st.session_state.df_resultados['output']
 output = pd.DataFrame(output, columns=['output'])
@@ -71,12 +78,38 @@ with st.spinner("Analyzing sentiments..."):
     output['sentiment'] = output['output'].progress_apply(obtener_sentimiento)
 
 st.write("Sentiment Analysis Complete!")
-st.write(output.head())
 
-# Plot sentiment distribution
-fig, ax = plt.subplots()
-output['sentiment'].value_counts().plot(kind='bar', ax=ax)
-st.pyplot(fig)
+# Calcular la distribución de sentimientos
+sentiment_counts = output['sentiment'].value_counts()
+sentiment_percentages = sentiment_counts / len(output) * 100
+
+# Crear un DataFrame para la visualización
+sentiment_df = pd.DataFrame({
+    'sentiment': sentiment_counts.index,
+    'count': sentiment_counts.values,
+    'percentage': sentiment_percentages.values
+})
+
+st.title("Análisis de Sentimientos")
+
+# 1. Métricas Destacadas
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric("Sentimiento Positivo", f"{get_sentiment_percentage(sentiment_df, 'Positive'):.1f}%")
+with col2:
+    st.metric("Sentimiento Neutral", f"{get_sentiment_percentage(sentiment_df, 'Neutral'):.1f}%")
+with col3:
+    st.metric("Sentimiento Negativo", f"{get_sentiment_percentage(sentiment_df, 'Negative'):.1f}%")
+
+
+# Gráfico de Pastel
+st.subheader("Proporción de Sentimientos")
+fig_pie = px.pie(sentiment_df, values='count', names='sentiment', 
+                 color='sentiment',
+                 color_discrete_map={'Positive': '#4CAF50', 'Neutral': '#FFA500', 'Negative': '#F44336'},
+                 hole=0.3)
+fig_pie.update_traces(textposition='inside', textinfo='percent+label')
+st.plotly_chart(fig_pie, use_container_width=True)
 
 # Filter tables by sentiment
 positive_table = output[output['sentiment'] == 'Positive']
