@@ -129,7 +129,7 @@ def main():
     
     # Definición de las opciones y sus descripciones
     cultural_options = {
-        
+        "Oaxaca": "La comunidad es central en la vida social. El trabajo comunitario refleja un fuerte sentido de solidaridad y colaboración. Son conocidos por su amabilidad y hospitalidad, creando un ambiente acogedor. La relación con la tierra y las tradiciones agrícolas es fundamental. Los festivales celebran las cosechas y el ciclo agrícola, reforzando los vínculos con la naturaleza y la cultura.",
         "CDMX": "Bajo sentido de pertenencia y participación en las instituciones políticas y económicas, se sienten desconectadas del sistema de gobierno, afectando la cohesión y participación ciudadana.",
         "Veracruz": "Se caracteriza por su hospitalidad, orgullo en sus tradiciones, resiliencia ante las dificultades y un enfoque fuerte en la familia y la comunidad, celebrando su diversidad cultural.",
         "Monterrey": "Se distinguen por valores como la perseverancia, la familia, el trabajo y la solidaridad. Existe una fuerte ética del trabajo y un enfoque en el éxito personal y profesional. Suelen valorar el esfuerzo y la dedicación como medios para alcanzar objetivos. La proximidad a Estados Unidos ha influido en las creencias y costumbres, introduciendo elementos de cultura norteamericana que se mezclan con las tradiciones locales.",
