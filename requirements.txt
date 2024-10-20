@@ -1,0 +1,5 @@
+streamlit == 1.39.0
+#pandas == 2.0.3
+tqdm == 4.66.5
+"huggingface_hub[hf_transfer]"
+datasets == 3.0.1
