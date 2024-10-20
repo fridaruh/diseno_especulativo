@@ -7,7 +7,7 @@ from huggingface_hub import InferenceClient
 import time
 
 st.set_page_config(
-    page_title="Simulador de impacto cultural",
+    page_title="Simulador de impacto de políticas públicas",
     page_icon="👩‍👩‍👦",
 )
 
