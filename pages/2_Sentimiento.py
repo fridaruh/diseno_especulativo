@@ -77,6 +77,7 @@ def procesar_texto(df):
 
 # Aplicación Streamlit
 st.title("Análisis de sentimiento de la iniciativa")
+st.write("El análisis puede tomar hasta 3 minutos en terminar de realizarse")
 
 # Verificar si 'df_resultados' existe en el estado de la sesión
 if 'df_resultados' not in st.session_state or st.session_state['df_resultados'] is None:
